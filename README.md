@@ -32,13 +32,23 @@ MasterJi Book Library by Riday is a lightweight and responsive web application t
 
 ## Screenshots
 
+<table>
+  <tr>
+    <td><img src="./src/assets/masterJiBookLibrary.png" alt="Desktop View" width="800"/></td>
+    <td><img src="./src/assets/masterjiBookLIbraryMobileView.png" alt="Mobile View" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Desktop View</b></td>
+    <td align="center"><b>Mobile View</b></td>
+  </tr>
+</table>
 
 ---
 
 ## Live Demo
 
 Check out the live version of the app here:  
-[MasterJi Book Library Live Demo](https://your-deployment-link-here.com)
+[MasterJi Book Library Live Demo](https://masterji-book-library.netlify.app/)
 
 ---
 
@@ -65,4 +75,3 @@ Follow these steps to run the project locally:
     ```bash
      npx serve .
     ```
-    

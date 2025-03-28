@@ -221,7 +221,6 @@ body {
     width: 100%;
     height: 100%;
     padding: 1rem 2rem;
-    overflow-x: hidden;
 }
 
 /* Skeleton Loader Styles */
@@ -363,7 +362,7 @@ body {
     justify-items: center;
 }
 .list-container{
-    grid-template-columns: 1fr!important;
+    grid-template-columns:minmax(250px, 1fr)!important;
 
 }
 
@@ -577,6 +576,23 @@ body {
         width: auto!important;
 
         object-fit: cover;
+    }
+
+}
+@media (max-width:500px){
+    .list-container .list-card{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .list-container .list-thumbnail{
+        width: 150px!important;
+        height: 100%!important;
+        padding: 5px;
+    }
+    .list-container .list-thumbnail img{
+        width: 150px!important;
+        height: 100%!important;
     }
 
 }
