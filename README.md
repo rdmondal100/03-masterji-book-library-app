@@ -31,11 +31,23 @@ MasterJi Book Library by Riday is a lightweight and responsive web application t
 ---
 
 ## Screenshots
-
+### Grid Layout
 <table>
   <tr>
-    <td><img src="./src/assets/masterJiBookLibrary.png" alt="Desktop View" width="800"/></td>
-    <td><img src="./src/assets/masterjiBookLIbraryMobileView.png" alt="Mobile View" width="200"/></td>
+    <td><img src="./src/assets/masterJiBookLibrary.png" alt="Desktop View grid layout" width="800"/></td>
+    <td><img src="./src/assets/masterjiBookLIbraryMobileView.png" alt="Mobile View grid layout" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Desktop View</b></td>
+    <td align="center"><b>Mobile View</b></td>
+  </tr>
+</table>
+
+### List Layout
+<table>
+  <tr>
+    <td><img src="./src/assets/dekstopviewLIstLayout.png" alt="Desktop View list layout" width="800"/></td>
+    <td><img src="./src/assets/mobileviewLIstLayout.png" alt="Mobile View List layout" width="200"/></td>
   </tr>
   <tr>
     <td align="center"><b>Desktop View</b></td>
@@ -75,3 +87,33 @@ Follow these steps to run the project locally:
     ```bash
      npx serve .
     ```
+
+
+
+## Usage
+
+1. Open the application in your browser.
+2. Use the search bar to find books.
+3. Toggle between grid and list views.
+4. Sort books by title or publication date.
+5. Navigate between pages using pagination controls.
+
+---
+
+## Contributing
+
+Contributions are welcome! If you'd like to improve this project, follow these steps:
+
+1. **Fork the repository**
+2. **Create a new branch** (`feature-branch`)
+3. **Commit your changes**
+4. **Push to GitHub**
+5. **Submit a Pull Request**
+
+---
+
+## Connect with me
+**Owner:** Riday Mondal  
+
+[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/ridaymondal100) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/ridaymondal100) [![X](https://img.shields.io/badge/X-black.svg?logo=X&logoColor=white)](https://x.com/rdmondal100) [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:rdmondal100@gmail.com)  
+
