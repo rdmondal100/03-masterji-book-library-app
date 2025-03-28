@@ -22,6 +22,6 @@
                 1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages
             ]
         }
-
+        console.log(pagination)
         return pagination;
     }

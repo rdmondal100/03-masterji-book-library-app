@@ -1,13 +1,15 @@
 import { getBooksFromApi } from "./Services/bookServices.js"
 import { createSkelitonOfBooksAndRenderONUi } from "./utils/createSkelitonOfBooksAndRenderONUi.js"
 import { debounce } from "./utils/debounce.js"
-import { filterBooks } from "./utils/filterBooks.js"
+import { filteredBooksByParameter } from "./utils/filterBooks.js"
 import { generatePagination } from "./utils/pagination.js"
 import { toggleGridList } from "./utils/toggleGrid&List.js"
 
 let currentPaginationDetails = {}
 let currentPageAllBooks = []
+let allFilteredBooks = []
 let searchQuery = ''
+let isFiltered = false
 
 document.addEventListener('DOMContentLoaded', async () => {
     //get books data from services
@@ -36,12 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 messageElement.classList.add("message-no-book")
                 bookContainer.innerHTML = ''
                 messageElement.innerHTML = `
-                <div> No books available </div>
+                <div> No books found </div>
                 `
                 bookContainer.appendChild(messageElement)
                 console.log(messageElement)
                 console.log(bookContainer)
-                console.log("No books")
             }
 
         } catch (error) {
@@ -166,25 +167,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginationContainer.addEventListener('click', async (e) => {
             const { currentPage, isNextPage, isPreviousPage } = currentPaginationDetails
             const target = e.target;
-            const pageSwitchBtn =
-                target.closest(".page-switch-btn")
+            const pageSwitchBtn = target.closest(".page-switch-btn")
             const pageElement = target.closest('.page-item')
             console.log(pageSwitchBtn)
+            console.log(pageElement)
             if (pageSwitchBtn) {
                 console.log(currentPaginationDetails)
                 if (target.id === 'prevBtn' && isPreviousPage) {
-                    await getDataFromServices(currentPage - 1, 15, searchQuery);
+                    if (isFiltered) {
+                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage - 1, 15, allFilteredBooks)
+                        renderBooks(currentPageAllBooks)
+
+                    } else {
+                        await getDataFromServices(currentPage - 1, 15, searchQuery);
+                    }
                 } else if (target.id === 'nextBtn' && isNextPage) {
-                    await getDataFromServices(currentPage + 1, 15, searchQuery);
+                    if (isFiltered) {
+                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage + 1, 15, allFilteredBooks)
+                        renderBooks(currentPageAllBooks)
+
+
+                    } else {
+                        await getDataFromServices(currentPage + 1, 15, searchQuery);
+                    }
                 }
             }
 
             else if (pageElement && pageElement.classList.contains('page-item') && !(pageElement.classList.contains('disabled'))) {
                 const pageNumber = parseInt(pageElement.innerText, 10);
+                console.log(pageNumber)
                 if (isNaN(pageNumber)) return;
+                if (isFiltered) {
+                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(pageNumber, 15, allFilteredBooks)
+                    renderBooks(currentPageAllBooks)
 
-                // Wait for new data before rendering
-                await getDataFromServices(pageNumber, 15, searchQuery);
+                } else {
+                    // Wait for new data before rendering
+                    await getDataFromServices(pageNumber, 15, searchQuery);
+                }
 
             }
             else {
@@ -209,6 +229,70 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
+    //filter the all books based on parameter
+
+    function filterBooks(currentPaginationDetails) {
+        console.log(currentPaginationDetails)
+        const filterElement = document.getElementById("sortBy")
+        filterElement.addEventListener('change', async () => {
+            const filterParameter = filterElement.value
+            if (filterParameter) {
+                isFiltered = true
+                console.log(filterParameter)
+            } else {
+                isFiltered = false
+            }
+            console.log(isFiltered)
+            const { booksArray } = await getBooksFromApi(1, currentPaginationDetails?.totalBooks, '')
+            console.log(booksArray.length)
+            if (booksArray.length) {
+                allFilteredBooks = filteredBooksByParameter(filterParameter, booksArray)
+                if (Array.isArray(allFilteredBooks) || allFilteredBooks.length) {
+                    //get the paginated books from filtered books
+                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(1, 15, allFilteredBooks)
+                    if (currentPageAllBooks) {
+                        console.log(currentPageAllBooks)
+                        renderBooks(currentPageAllBooks)
+                    }
+                }
+            }
+        })
+    }
+
+    //get paginatedBooks for filtered books as it is not provided by the api
+    function getPaginatedBooksForFilteredBooks(givenCurrentPage, booksPerPage = 15, books) {
+        const { totalPages } = currentPaginationDetails
+
+        // check if previous is exit
+        if(givenCurrentPage > 1){
+            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:true}
+
+        }else{
+            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:false}
+
+        }
+
+        // check if next page is exist
+        if(givenCurrentPage < totalPages){
+            currentPaginationDetails = {...currentPaginationDetails,isNextPage:true}
+
+        }else{
+            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:false}
+
+        }
+
+        currentPaginationDetails = {...currentPaginationDetails,currentPage:givenCurrentPage}
+        console.log(currentPaginationDetails)
+        if (!Array.isArray(books) || books.length === 0) return [];
+
+        const startIndex = (givenCurrentPage - 1) * booksPerPage;
+        const endIndex = startIndex + booksPerPage;
+
+
+        renderPagination(currentPaginationDetails)
+        return books.slice(startIndex, endIndex);
+    }
+
 
 
     //initial render
@@ -217,8 +301,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchBooks()
     toggleGridList()
 
-    filterBooks(currentPaginationDetails)
-    
+
+    console.log(filterBooks(currentPaginationDetails))
+    console.log("theFilteredBooks")
+
 
 
 })
