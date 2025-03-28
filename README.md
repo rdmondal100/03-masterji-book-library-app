@@ -13,7 +13,6 @@ MasterJi Book Library by Riday is a lightweight and responsive web application t
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ---
