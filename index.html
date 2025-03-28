@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterji Book Library - Riday</title>
+
+    <!-- connect the css file with the html to style it  -->
+    <link rel="stylesheet" href="./src/style.css">
+
+    <!-- this script is for using axios. Axios help to send/get request to api -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.8.4/axios.js"
+        integrity="sha512-GZ3tCTg/fmuBbcc3NlFeEjz2Uozw2dH39ePntzLUPMT+Y+6yvH6U2SY7SoLhFRlebuPWmwd+mafASkalUSNGoA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- this link is used for using icon from fontawesome  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <!-- header  -->
+    <header class="header">
+        <!-- webistes header title  -->
+        <div class="title">MasterJi Book Library by Riday</div>
+
+        <div class="search-wrapper">
+
+            <!-- for searching the books -->
+            <input type="search" placeholder="Search your book.." class="search-input" id="searchInput">
+        </div>
+
+            <!-- for applying filter on book search  -->
+            <div class="utils">
+
+            <div class="filter-search-result">
+                <div class="controls">
+                    <div class="sort-control">
+                        <i class="fa-sharp fa-solid fa-filter search-filter-icon"></i>
+                        <label>Sort By:</label>
+
+                        <select id="sortBy">
+                            <option value="">None</option>
+                            <option value="title_asc">Title (A-Z)</option>
+                            <option value="title_desc">Title (Z-A)</option>
+                            <option value="date_asc">Date (Oldest First)</option>
+                            <option value="date_desc">Date (Newest First)</option>
+                        </select>
+                    </div>
+                    <!-- Keep your existing search input -->
+                </div>
+            </div>
+
+
+        <div class="grid-list-wrapper">
+            <div class="icon">
+                <i class="fa-solid fa-grip"></i>
+                <i class="fa-solid fa-list active"></i></div>
+        </div>
+    </div>
+
+    </header>
+
+    <!-- main content will be here  -->
+    <main class="main">
+        
+        <div class="books-container" id="bookContainer">
+
+        </div>
+
+
+        <!-- pagination -->
+        <div class="pagination-container">
+
+        </div>
+
+
+    </main>
+    <!-- connect the app.js script with the html to interact with the content -->
+    <script type="module" src="./src/app.js"></script>
+</body>
+
+</html>
