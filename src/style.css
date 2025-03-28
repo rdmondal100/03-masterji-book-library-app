@@ -221,7 +221,7 @@ body {
     width: 100%;
     height: 100%;
     padding: 1rem 2rem;
-
+    overflow-x: hidden;
 }
 
 /* Skeleton Loader Styles */

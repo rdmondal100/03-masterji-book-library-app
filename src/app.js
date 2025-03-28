@@ -175,20 +175,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log(currentPaginationDetails)
                 if (target.id === 'prevBtn' && isPreviousPage) {
                     if (isFiltered) {
-                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage - 1, 15, allFilteredBooks)
+                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage - 1, 15, allFilteredBooks,allFilteredBooks.length)
                         renderBooks(currentPageAllBooks)
+                        console.log("local")
 
                     } else {
                         await getDataFromServices(currentPage - 1, 15, searchQuery);
+                                                console.log("api")
+
                     }
                 } else if (target.id === 'nextBtn' && isNextPage) {
                     if (isFiltered) {
-                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage + 1, 15, allFilteredBooks)
+                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(currentPage + 1, 15, allFilteredBooks,allFilteredBooks.length)
                         renderBooks(currentPageAllBooks)
+                        console.log("local")
 
 
                     } else {
                         await getDataFromServices(currentPage + 1, 15, searchQuery);
+                                                console.log("api")
+
                     }
                 }
             }
@@ -198,12 +204,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log(pageNumber)
                 if (isNaN(pageNumber)) return;
                 if (isFiltered) {
-                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(pageNumber, 15, allFilteredBooks)
+                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(pageNumber, 15, allFilteredBooks,allFilteredBooks.length)
                     renderBooks(currentPageAllBooks)
+                    console.log("local")
+
 
                 } else {
                     // Wait for new data before rendering
                     await getDataFromServices(pageNumber, 15, searchQuery);
+                    console.log("api")
+
                 }
 
             }
@@ -218,11 +228,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     function searchBooks() {
         const searchInputElement = document.getElementById("searchInput")
         const { currentPage } = currentPaginationDetails
+
         if (searchInputElement) {
             const searchWithDebounce = debounce(getDataFromServices, 1)
             searchInputElement.addEventListener('input', () => {
                 searchQuery = String(searchInputElement.value)
-                searchWithDebounce(currentPage, 15, searchQuery)
+                if (isFiltered) {
+                    let searchBeforeAllFilteredBooks = null
+                    if (searchQuery) {
+                        console.log(allFilteredBooks)
+                        searchBeforeAllFilteredBooks = allFilteredBooks
+                        allFilteredBooks = allFilteredBooks.filter((book) => {
+                            return (
+                                book.searchInfo?.textSnippet.toLowerCase().includes(searchQuery) ||
+                                book.volumeInfo.title?.includes(searchQuery) ||
+                                book.volumeInfo.subtitle?.includes(searchQuery)
+                            );
+                        })
+                        console.log(allFilteredBooks)
+                        currentPageAllBooks = getPaginatedBooksForFilteredBooks(1, 15, allFilteredBooks,allFilteredBooks.length)
+
+                        console.log(currentPageAllBooks)
+                        renderBooks(currentPageAllBooks)
+                        allFilteredBooks = searchBeforeAllFilteredBooks
+                        console.log("render search and filtered")
+                    } else {
+                        currentPageAllBooks =  getPaginatedBooksForFilteredBooks(1, 15, allFilteredBooks,allFilteredBooks?.length)
+                        if(currentPageAllBooks){
+                            renderBooks(currentPageAllBooks)
+                        }
+
+                    }
+                } else {
+                    searchWithDebounce(currentPage, 15, searchQuery)
+                }
 
             })
         }
@@ -243,13 +282,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 isFiltered = false
             }
             console.log(isFiltered)
-            const { booksArray } = await getBooksFromApi(1, currentPaginationDetails?.totalBooks, '')
+            console.log(searchQuery)
+            const { booksArray } = await getBooksFromApi(1, currentPaginationDetails?.totalBooks, searchQuery)
             console.log(booksArray.length)
             if (booksArray.length) {
                 allFilteredBooks = filteredBooksByParameter(filterParameter, booksArray)
                 if (Array.isArray(allFilteredBooks) || allFilteredBooks.length) {
                     //get the paginated books from filtered books
-                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(1, 15, allFilteredBooks)
+                    currentPageAllBooks = getPaginatedBooksForFilteredBooks(1, 15, allFilteredBooks,allFilteredBooks?.length)
                     if (currentPageAllBooks) {
                         console.log(currentPageAllBooks)
                         renderBooks(currentPageAllBooks)
@@ -260,28 +300,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     //get paginatedBooks for filtered books as it is not provided by the api
-    function getPaginatedBooksForFilteredBooks(givenCurrentPage, booksPerPage = 15, books) {
-        const { totalPages } = currentPaginationDetails
+    function getPaginatedBooksForFilteredBooks(givenCurrentPage, booksPerPage = 15, books,givenTotalBooks=0) {
+        let totalPages
 
+        totalPages = Math.ceil(givenTotalBooks/booksPerPage)
+            currentPaginationDetails = { ...currentPaginationDetails, totalPages: totalPages,currentPage:givenCurrentPage }
+            console.log(currentPaginationDetails)
+            console.log(totalPages)
+
+
+        console.log("total page are:  ")
+        console.log(totalPages)
         // check if previous is exit
-        if(givenCurrentPage > 1){
-            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:true}
+        if (givenCurrentPage > 1) {
+            currentPaginationDetails = { ...currentPaginationDetails, isPreviousPage: true }
 
-        }else{
-            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:false}
+        } else {
+            currentPaginationDetails = { ...currentPaginationDetails, isPreviousPage: false }
 
         }
 
         // check if next page is exist
-        if(givenCurrentPage < totalPages){
-            currentPaginationDetails = {...currentPaginationDetails,isNextPage:true}
+        if (givenCurrentPage < totalPages) {
+            currentPaginationDetails = { ...currentPaginationDetails, isNextPage: true }
 
-        }else{
-            currentPaginationDetails = {...currentPaginationDetails,isPreviousPage:false}
+        } else {
+            currentPaginationDetails = { ...currentPaginationDetails, isNextPage: false }
 
         }
 
-        currentPaginationDetails = {...currentPaginationDetails,currentPage:givenCurrentPage}
+        currentPaginationDetails = { ...currentPaginationDetails, currentPage: givenCurrentPage }
         console.log(currentPaginationDetails)
         if (!Array.isArray(books) || books.length === 0) return [];
 
